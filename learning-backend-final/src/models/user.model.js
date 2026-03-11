@@ -8,7 +8,7 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            lowecase: true,
+            lowercase: true,
             trim: true, 
             index: true
         },
@@ -16,7 +16,7 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            lowecase: true,
+            lowercase: true,
             trim: true, 
         },
         fullName: {
@@ -27,7 +27,7 @@ const userSchema = new Schema(
         },
         avatar: {
             type: String, // cloudinary url
-            required: true,
+            default: ""
         },
         coverImage: {
             type: String, // cloudinary url
@@ -44,8 +44,45 @@ const userSchema = new Schema(
         },
         refreshToken: {
             type: String
+        },
+        
+        // ========== PITCHVAULT FIELDS ==========
+        userType: {
+            type: String,
+            enum: ['founder', 'investor'],
+            default: 'founder'
+        },
+        // For Founders
+        companyName: {
+            type: String,
+            trim: true
+        },
+        // For Investors
+        firmName: {
+            type: String,
+            trim: true
+        },
+        investmentFocus: {
+            type: [String],  // Array of sectors they invest in
+            default: []
+        },
+        checkSize: {
+            type: String,  // e.g., "$50K - $500K"
+            trim: true
+        },
+        bio: {
+            type: String,
+            maxlength: 500,
+            trim: true
+        },
+        linkedIn: {
+            type: String,
+            trim: true
+        },
+        website: {
+            type: String,
+            trim: true
         }
-
     },
     {
         timestamps: true

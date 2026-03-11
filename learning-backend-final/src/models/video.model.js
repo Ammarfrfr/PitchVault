@@ -1,4 +1,4 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const videoSchema = new Schema(
@@ -15,20 +15,20 @@ const videoSchema = new Schema(
             type: String, //cloudinary url
             required: true
         },
-        thumbnailPublicId:{
+        thumbnailPublicId: {
             type: String,
             required: true
-        },  
+        },
         title: {
-            type: String, 
+            type: String,
             required: true
         },
         description: {
-            type: String, 
+            type: String,
             required: true
         },
         duration: {
-            type: Number, 
+            type: Number,
             required: true
         },
         views: {
@@ -42,15 +42,69 @@ const videoSchema = new Schema(
         owner: {
             type: Schema.Types.ObjectId,
             ref: "User"
+        },
+        
+        // ========== PITCHVAULT FIELDS ==========
+        companyName: {
+            type: String,
+            trim: true
+        },
+        founderEmail: {
+            type: String,
+            trim: true,
+            lowercase: true
+        },
+        sector: {
+            type: String,
+            enum: [
+                'AI / Machine Learning',
+                'FinTech',
+                'HealthTech',
+                'EdTech',
+                'E-Commerce',
+                'SaaS',
+                'CleanTech',
+                'Consumer',
+                'Enterprise',
+                'Marketplace',
+                'Other'
+            ]
+        },
+        stage: {
+            type: String,
+            enum: ['Pre-Seed', 'Seed', 'Series A', 'Series B', 'Series C+', 'Growth']
+        },
+        raisingAmount: {
+            type: String,  // e.g., "$500K - $1M"
+            trim: true
+        },
+        tagline: {
+            type: String,
+            maxlength: 150,
+            trim: true
+        },
+        location: {
+            type: String,
+            trim: true
+        },
+        website: {
+            type: String,
+            trim: true
+        },
+        linkedIn: {
+            type: String,
+            trim: true
+        },
+        isFeatured: {
+            type: Boolean,
+            default: false
         }
-
-    }, 
+    },
     {
         timestamps: true
     }
 )
 
 videoSchema.plugin(mongooseAggregatePaginate)
-// mongooseAggregatePaginate is a pagination plugin for mongoose schemas which helps in paginating large datasets efficiently in the way that we can fetch data in chunks rather than loading everything at once which improves performance and user experience.
 
 export const Video = mongoose.model("Video", videoSchema)

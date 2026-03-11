@@ -1,0 +1,426 @@
+/* ============================================
+   PITCHVAULT — How It Works Page
+   ============================================ */
+
+.how-page {
+  min-height: 100vh;
+  padding-top: var(--nav-height);
+}
+
+/* Hero */
+.how-hero {
+  padding: var(--space-4xl) var(--content-padding);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.how-hero h1 {
+  margin-bottom: var(--space-lg);
+}
+
+.how-hero p {
+  font-size: 18px;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* Steps */
+.how-steps {
+  padding: 0 var(--content-padding) var(--space-4xl);
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.step-card {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr;
+  gap: var(--space-3xl);
+  padding: var(--space-4xl) 0;
+  border-top: 1px solid var(--border);
+  align-items: center;
+}
+
+.step-card.reverse {
+  direction: rtl;
+}
+
+.step-card.reverse > * {
+  direction: ltr;
+}
+
+.step-number {
+  font-family: var(--font-serif);
+  font-size: 72px;
+  color: var(--cream);
+  line-height: 1;
+  letter-spacing: -3px;
+}
+
+.step-content h3 {
+  font-size: 28px;
+  margin-bottom: var(--space-md);
+  color: var(--black);
+}
+
+.step-content p {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: var(--space-lg);
+}
+
+.step-list {
+  list-style: none;
+  padding: 0;
+}
+
+.step-list li {
+  font-size: 14px;
+  color: var(--gray);
+  padding: 8px 0;
+  padding-left: 24px;
+  position: relative;
+}
+
+.step-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 1px;
+  background: var(--gold);
+}
+
+/* Step Visuals */
+.step-visual {
+  display: flex;
+  justify-content: center;
+}
+
+.visual-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  padding: var(--space-2xl);
+  width: 100%;
+  max-width: 300px;
+}
+
+.upload-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  text-align: center;
+}
+
+.visual-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+}
+
+.upload-visual span {
+  font-size: 13px;
+  color: var(--gray);
+  font-family: monospace;
+}
+
+/* Discover Visual */
+.discover-visual {
+  padding: var(--space-lg);
+}
+
+.filter-pills {
+  display: flex;
+  gap: 8px;
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.pill {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--gray);
+}
+
+.pill.active {
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+}
+
+.mini-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mini-card {
+  height: 40px;
+  background: var(--white);
+  border: 1px solid var(--border);
+}
+
+/* Connect Visual */
+.connect-visual {
+  padding: var(--space-lg);
+}
+
+.email-preview {
+  background: var(--white);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.email-header {
+  padding: 8px 12px;
+  background: var(--black);
+  display: flex;
+  gap: 6px;
+}
+
+.email-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.6;
+}
+
+.email-dot:first-child {
+  opacity: 1;
+}
+
+.email-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.email-line {
+  height: 8px;
+  background: var(--cream);
+  border-radius: 4px;
+}
+
+.email-line.short {
+  width: 40%;
+}
+
+.email-line.medium {
+  width: 70%;
+}
+
+/* FAQ */
+.how-faq {
+  background: var(--cream);
+  padding: var(--space-section) var(--content-padding);
+}
+
+.how-faq .section-tag,
+.how-faq h2 {
+  text-align: center;
+}
+
+.how-faq h2 {
+  margin-bottom: var(--space-3xl);
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  background: var(--white);
+  padding: var(--space-xl);
+}
+
+.faq-item h4 {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--black);
+  margin-bottom: 12px;
+}
+
+.faq-item p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* CTA */
+.how-cta {
+  padding: var(--space-section) var(--content-padding);
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.how-cta h2 {
+  margin-bottom: var(--space-md);
+}
+
+.how-cta p {
+  font-size: 16px;
+  margin-bottom: var(--space-2xl);
+}
+
+.how-cta-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.how-cta-actions .btn-outline {
+  padding: 18px 40px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .step-card {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    text-align: center;
+  }
+  
+  .step-card.reverse {
+    direction: ltr;
+  }
+  
+  .step-number {
+    font-size: 56px;
+  }
+  
+  .step-list {
+    display: inline-block;
+    text-align: left;
+  }
+}
+
+@media (max-width: 768px) {
+  .how-hero {
+    padding: var(--space-2xl) var(--content-padding);
+  }
+  
+  .how-hero p {
+    font-size: 16px;
+  }
+  
+  .how-steps {
+    padding: 0 var(--content-padding) var(--space-2xl);
+  }
+  
+  .step-card {
+    padding: var(--space-2xl) 0;
+  }
+  
+  .step-number {
+    font-size: 48px;
+  }
+  
+  .step-content h3 {
+    font-size: 22px;
+  }
+  
+  .step-content p {
+    font-size: 14px;
+  }
+  
+  .visual-card {
+    padding: var(--space-xl);
+  }
+  
+  .faq-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .faq-item {
+    padding: var(--space-lg);
+  }
+  
+  .faq-item h4 {
+    font-size: 14px;
+  }
+  
+  .faq-item p {
+    font-size: 13px;
+  }
+  
+  .how-faq {
+    padding: var(--space-3xl) var(--content-padding);
+  }
+  
+  .how-cta {
+    padding: var(--space-3xl) var(--content-padding);
+  }
+  
+  .how-cta p {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 640px) {
+  .how-hero {
+    padding: var(--space-xl) var(--content-padding);
+  }
+  
+  .step-number {
+    font-size: 40px;
+  }
+  
+  .step-content h3 {
+    font-size: 20px;
+    margin-bottom: var(--space-sm);
+  }
+  
+  .visual-card {
+    max-width: 100%;
+    padding: var(--space-lg);
+  }
+  
+  .visual-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .filter-pills {
+    justify-content: center;
+  }
+  
+  .pill {
+    font-size: 9px;
+    padding: 5px 10px;
+  }
+  
+  .how-cta-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .how-cta-actions .btn-primary,
+  .how-cta-actions .btn-outline {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+

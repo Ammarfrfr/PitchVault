@@ -14,10 +14,17 @@ export function AuthProvider({ children }){
   const normalizeUserFromResponse = (res) => {
     // backend responses vary; try common shapes
     if(!res) return null
-    if(res.data?.data) return res.data.data
-    if(res.data?.user) return res.data.user
-    if(res.data) return res.data
-    return null
+    let user = null
+    if(res.data?.data) user = res.data.data
+    else if(res.data?.user) user = res.data.user
+    else if(res.data) user = res.data
+    
+    // Ensure _id is available (some backends return 'id' instead of '_id')
+    if(user && !user._id && user.id) {
+      user._id = user.id
+    }
+    
+    return user
   }
 
   const fetchCurrentUser = async () => {

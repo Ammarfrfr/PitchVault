@@ -9,11 +9,8 @@ import { upload } from "../middlewares/multer.middleware.js"
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
-    // in sortType we have desc because by default we want latest videos first and in sortBy we have createdAt because we want to sort by creation time
-    const { page = 1, limit = 10, query, sortBy = "createdAt", sortType = "desc", userId } = req.query
-    //TODO: get all videos based on query, sort, pagination
+    const { page = 1, limit = 10, query, sortBy = "createdAt", sortType = "desc", userId, sector, stage } = req.query
 
-    // converting to number because query params are always strings
     const pageNumber = Number(page) 
     const limitNumber = Number(limit) 
 
@@ -22,37 +19,41 @@ const getAllVideos = asyncHandler(async (req, res) => {
       isPublished: true
     }
 
-    // if userId is present in query params, then filter videos by that userId
-    // this if else is used to filter videos by userId if userId is provided in query params and is a valid ObjectId then only show videos of that user
+    // Filter by owner
     if (userId && isValidObjectId(userId)) {
       filter.owner = userId
-      // this line means filter by owner field in video model which is a reference to user model
     }
 
-    // search by title or description
-      // query is the search term from req.query
-      // filter.$or is used to search in multiple fields which means either title or description
-      // regex is used for partial match and i is for case insensitive which is used in YouTube and all that shit
-      // options: 'i' means case insensitive and the multiple options in $options is liek "i" and "m" which is used for multiline search and "s" for dotall mode which is used for matching new lines with dot(.) operator etc 
+    // Filter by sector (PitchVault)
+    if (sector && sector !== 'All') {
+      filter.sector = sector
+    }
+
+    // Filter by stage (PitchVault)
+    if (stage && stage !== 'All Stages') {
+      filter.stage = stage
+    }
+
+    // Search by title, description, or company name
     if(query){
       filter.$or = [
         {title: { $regex: query, $options: 'i'}},
-        {description: {$regex: query, $options: 'i'}}
+        {description: {$regex: query, $options: 'i'}},
+        {companyName: {$regex: query, $options: 'i'}},
+        {tagline: {$regex: query, $options: 'i'}}
       ]
     }
-    // we use object to store sort options dynamically
+
     let sortOptions = {}
     sortOptions[sortBy] = sortType === "asc"? 1 : -1;
 
-    // countDocuments is used to get total number of documents matching the filter and is used for pagination
     const totalVideos = await Video.countDocuments(filter)
 
     const videos = await Video.find(filter)
       .sort(sortOptions)
-      .skip( (pageNumber - 1) * limitNumber )  // skip is used to skip the documents for pagination. For example, if pageNumber is 2 and limitNumber is 10, then skip will be (2-1)*10 = 10, which means skip first 10 documents
-      .limit(limitNumber)   // limit is used to limit the number of documents returned
-      .populate("owner", "username avatar") // Populating owner field with username and avatar only from User model
-      // populating owner field with username and avatar only
+      .skip( (pageNumber - 1) * limitNumber )
+      .limit(limitNumber)
+      .populate("owner", "username fullName avatar userType companyName")
 
     return res
     .status(200)
@@ -67,23 +68,31 @@ const getAllVideos = asyncHandler(async (req, res) => {
             limit: limitNumber
           }
         },
-        "Videos fetched successfully",
+        "Pitches fetched successfully",
       )
     )
     
 })
 
 const publishAVideo = asyncHandler(async (req, res) => {
-    const { title, description} = req.body
-    // TODO: get video, upload to cloudinary, create video
+    const { 
+      title, 
+      description,
+      // PitchVault fields
+      companyName,
+      founderEmail,
+      sector,
+      stage,
+      raisingAmount,
+      tagline,
+      location,
+      website,
+      linkedIn
+    } = req.body
 
     if(!title || !description){
       throw new ApiError(400, "Title and description are mandatory")
     }
-
-    /*
-      1. get video the same way you got photos from and then unlink that shits 
-    */
     
     const videoLocalPath = req.files?.videoFile?.[0]?.path;
     const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
@@ -114,56 +123,78 @@ const publishAVideo = asyncHandler(async (req, res) => {
       videoFile: video.url,
       thumbnail: thumbnail.url,
       thumbnailPublicId: thumbnail.public_id,
-      videoPublicId: video.public_id, // storing public_id to be able to delete the video from cloudinary later
+      videoPublicId: video.public_id,
       duration: video.duration,
-      owner: req.user._id
+      owner: req.user._id,
+      // PitchVault fields
+      companyName: companyName || undefined,
+      founderEmail: founderEmail || req.user.email,
+      sector: sector || undefined,
+      stage: stage || undefined,
+      raisingAmount: raisingAmount || undefined,
+      tagline: tagline || undefined,
+      location: location || undefined,
+      website: website || undefined,
+      linkedIn: linkedIn || undefined
     })
 
     return res
     .status(201)
     .json(
-      new ApiResponse(201, publishedVideo, "Video was published successfully")
+      new ApiResponse(201, publishedVideo, "Pitch published successfully")
     )
 
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    // req param is used generally to get resource 
-    //TODO: get video by id
 
-    /* This was wrong
-    const video = await Video.findById({
-      _id
-    })
-    */
+    if (!isValidObjectId(videoId)) {
+      throw new ApiError(400, "Invalid video ID")
+    }
 
     const video = await Video.findById(videoId)
+      .populate("owner", "username fullName avatar email userType companyName")
 
     if(!video){
-      throw new ApiError(400, "Video not found")
+      throw new ApiError(404, "Pitch not found")
     }
+
+    // Increment view count
+    video.views = (video.views || 0) + 1
+    await video.save({ validateBeforeSave: false })
 
     return res
     .status(200)
     .json(
-      new ApiResponse(200, videoId, "Video fetched successfully")
+      new ApiResponse(200, video, "Pitch fetched successfully")
     )
 })
 
 const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    //TODO: update video details like title, description, thumbnail
-    if(!videoId){
-      throw new ApiError(400, "Video ID is required")
+    
+    if(!videoId || !isValidObjectId(videoId)){
+      throw new ApiError(400, "Valid Video ID is required")
     }
 
     let thumbnailUrl;
-    // thumbnailUrl is defined to be used later if thumbnail is updated
+    let thumbnailPublicId;
 
-    const {title, description} = req.body
+    const {
+      title, 
+      description,
+      companyName,
+      founderEmail,
+      sector,
+      stage,
+      raisingAmount,
+      tagline,
+      location,
+      website,
+      linkedIn
+    } = req.body
 
-    // we had upload.single("thumbnail") middleware in route so we can access using req.file and not req.files?.thumbnail?.[0]?.path which is used when multiple files are uploaded
     const thumbnailLocalPath = req.file?.path;
     if(thumbnailLocalPath){
       const uploadThumbnail = await uploadOnCloudinary(thumbnailLocalPath)
@@ -171,36 +202,46 @@ const updateVideo = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Thumbnail upload failed")
       }
       thumbnailUrl = uploadThumbnail.url
+      thumbnailPublicId = uploadThumbnail.public_id
     }
-    
-    if(!(title || description || thumbnailLocalPath)){
-      throw new ApiError(400, "Change title or description or thumbnail to update video")
+
+    // Build update object dynamically
+    const updateFields = {}
+    if (title) updateFields.title = title
+    if (description) updateFields.description = description
+    if (thumbnailUrl) {
+      updateFields.thumbnail = thumbnailUrl
+      updateFields.thumbnailPublicId = thumbnailPublicId
+    }
+    // PitchVault fields
+    if (companyName !== undefined) updateFields.companyName = companyName
+    if (founderEmail !== undefined) updateFields.founderEmail = founderEmail
+    if (sector !== undefined) updateFields.sector = sector
+    if (stage !== undefined) updateFields.stage = stage
+    if (raisingAmount !== undefined) updateFields.raisingAmount = raisingAmount
+    if (tagline !== undefined) updateFields.tagline = tagline
+    if (location !== undefined) updateFields.location = location
+    if (website !== undefined) updateFields.website = website
+    if (linkedIn !== undefined) updateFields.linkedIn = linkedIn
+
+    if (Object.keys(updateFields).length === 0) {
+      throw new ApiError(400, "At least one field is required to update")
     }
 
     const updateDetails = await Video.findByIdAndUpdate(
       videoId,
-      {
-        $set:{
-          ...title && { title },
-          ...description && { description },
-          // this means ...thumbnailUrl && {thumbnail: thumbnailUrl} that if thumbnailUrl is defined then only add this key value pair to the object otherwise dont add anything
-          // this is done to avoid setting thumbnail to undefined if thumbnail is not updated
-          ...thumbnailUrl && {thumbnail: thumbnailUrl}
-        } 
-      },
-      {
-          new: true
-      }
-    )
+      { $set: updateFields },
+      { new: true }
+    ).populate("owner", "username fullName avatar")
 
     if(!updateDetails){
-      throw new ApiError(404, "Video not found")
+      throw new ApiError(404, "Pitch not found")
     }
 
     return res
     .status(200)
     .json(
-      new ApiResponse(200, updateDetails, "Changes in the video saved successfully")
+      new ApiResponse(200, updateDetails, "Pitch updated successfully")
     )
 })
 

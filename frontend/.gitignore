@@ -73,6 +73,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+DOCS
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

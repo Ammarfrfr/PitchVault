@@ -1,104 +1,301 @@
-.video-card {
-  border: 1px solid #ddd;
-  padding: 0.5rem;
-  border-radius: 6px;
-  width: 280px;
+/* Pitch Card - PitchVault */
+.pitch-card {
+  position: relative;
+  background: var(--white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
 }
 
-.video-card a {
-  text-decoration: none;
+.pitch-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.pitch-card.selected {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.pitch-card-link {
+  display: block;
   color: inherit;
+  text-decoration: none;
 }
 
-.video-thumb {
+/* Checkbox */
+.pitch-checkbox {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.pitch-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  accent-color: var(--gold);
+}
+
+/* Thumbnail */
+.pitch-thumbnail {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--cream);
+}
+
+.pitch-thumbnail img {
   width: 100%;
-  height: 160px;
+  height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.pitch-card:hover .pitch-thumbnail img {
+  transform: scale(1.05);
+}
+
+.pitch-duration {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
   border-radius: 4px;
 }
 
-.video-title {
-  font-size: 1rem;
-  margin: 0.5rem 0 0.25rem;
+.pitch-sector-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--gold);
+  color: var(--black);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 100px;
 }
 
-.video-owner {
+/* Info */
+.pitch-info {
+  padding: 1.25rem;
+}
+
+.pitch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.pitch-title {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: var(--black);
+  line-height: 1.3;
+  display: -webkit-box;
+  /* -webkit-line-clamp: 2; */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pitch-stage {
+  flex-shrink: 0;
+  background: var(--cream);
+  color: var(--text-secondary);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.pitch-company {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
-.owner-avatar {
+.pitch-avatar {
   width: 28px;
   height: 28px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #eee;
 }
 
-.owner-name {
-  font-size: 12px;
-  color: #555;
+.pitch-company-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
-.card-top {
-  position: relative;
-}
-
-.card-select {
-  position: absolute;
-  left: 8px;
-  top: 8px;
-  z-index: 2;
-}
-
-.card-body {
-  padding: 8px 0;
-}
-
-.card-footer {
+.pitch-meta {
   display: flex;
-  gap: 8px;
   align-items: center;
-  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
 }
 
-.card-edit {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 6px 8px;
-  border-radius: 6px;
-}
-
-.card-actions {
-  margin-top: 8px;
+.pitch-views {
   display: flex;
-  gap: 8px;
   align-items: center;
+  gap: 0.375rem;
 }
 
-.card-delete {
-  background: #ff4d4f;
-  color: #fff;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.card-delete[disabled] {
+.pitch-views svg {
   opacity: 0.6;
-  cursor: default;
 }
 
-.card-missing {
-  margin-top: 8px;
-  color: #a00;
-  font-size: 13px;
+/* Actions */
+.pitch-actions {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
 }
 
-.card-error {
-  color: red;
-  font-size: 12px;
+.pitch-card:hover .pitch-actions {
+  opacity: 1;
+}
+
+.pitch-action-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pitch-action-btn.edit {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--black);
+}
+
+.pitch-action-btn.edit:hover {
+  background: var(--gold);
+}
+
+.pitch-action-btn.delete {
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+}
+
+.pitch-action-btn.delete:hover {
+  background: #c0392b;
+}
+
+.pitch-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pitch-card {
+    border-radius: 12px;
+  }
+  
+  .pitch-card:hover {
+    transform: none;
+  }
+  
+  .pitch-info {
+    padding: 1rem;
+  }
+  
+  .pitch-title {
+    font-size: 1rem;
+  }
+  
+  .pitch-stage {
+    font-size: 0.625rem;
+    padding: 3px 6px;
+  }
+  
+  .pitch-company {
+    margin-bottom: 0.5rem;
+  }
+  
+  .pitch-avatar {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .pitch-company-name {
+    font-size: 0.8125rem;
+  }
+  
+  .pitch-meta {
+    font-size: 0.75rem;
+  }
+  
+  .pitch-duration {
+    font-size: 0.6875rem;
+    padding: 3px 6px;
+  }
+  
+  .pitch-sector-badge {
+    font-size: 0.5625rem;
+    padding: 3px 8px;
+  }
+  
+  /* Show actions on mobile (no hover) */
+  .pitch-actions {
+    opacity: 1;
+  }
+  
+  .pitch-action-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .pitch-checkbox {
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+  
+  .pitch-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pitch-info {
+    padding: 0.875rem;
+  }
+  
+  .pitch-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .pitch-title {
+    font-size: 0.9375rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
 }

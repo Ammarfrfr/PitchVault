@@ -1,0 +1,240 @@
+/* ============================================
+   PITCHVAULT — Auth Pages (Login/Register)
+   ============================================ */
+
+.auth-page {
+  min-height: calc(100vh - var(--nav-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--content-padding);
+  background: var(--cream);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+  background: var(--white);
+  padding: var(--space-2xl);
+  border: 1px solid var(--border);
+}
+
+.auth-container-wide {
+  max-width: 480px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.auth-logo {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  color: var(--black);
+  display: inline-block;
+  margin-bottom: var(--space-lg);
+}
+
+.auth-logo span {
+  color: var(--gold);
+}
+
+.auth-header h1 {
+  font-size: 28px;
+  margin-bottom: var(--space-sm);
+}
+
+.auth-header p {
+  font-size: 14px;
+  color: var(--gray);
+}
+
+/* Error */
+.auth-error {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #c0392b;
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Info message (redirect message) */
+.auth-info {
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: #8b7355;
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.form-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+/* Avatar Upload */
+.avatar-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.avatar-label {
+  cursor: pointer;
+}
+
+.avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--gray);
+  transition: all var(--transition-fast);
+}
+
+.avatar-placeholder:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.avatar-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+}
+
+.avatar-hint {
+  font-size: 12px;
+  color: var(--gray);
+}
+
+/* Submit Button */
+.auth-submit {
+  width: 100%;
+  padding: 16px;
+  margin-top: var(--space-sm);
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.auth-footer {
+  text-align: center;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border);
+}
+
+.auth-footer p {
+  font-size: 14px;
+  color: var(--gray);
+}
+
+.auth-footer a {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .auth-page {
+    padding: var(--space-xl) var(--space-md);
+    min-height: calc(100vh - 64px);
+    align-items: flex-start;
+    padding-top: calc(64px + var(--space-xl));
+  }
+  
+  .auth-container {
+    padding: var(--space-xl);
+  }
+  
+  .auth-header {
+    margin-bottom: var(--space-lg);
+  }
+  
+  .auth-logo {
+    font-size: 22px;
+    margin-bottom: var(--space-md);
+  }
+  
+  .auth-header h1 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: var(--space-md);
+    padding-top: calc(64px + var(--space-md));
+  }
+  
+  .auth-container {
+    padding: var(--space-lg);
+  }
+  
+  .auth-container-wide {
+    max-width: 100%;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .auth-form {
+    gap: var(--space-md);
+  }
+  
+  .auth-submit {
+    padding: 14px;
+  }
+  
+  .avatar-placeholder,
+  .avatar-preview {
+    width: 70px;
+    height: 70px;
+  }
+}
+

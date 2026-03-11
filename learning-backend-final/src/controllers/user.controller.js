@@ -33,7 +33,7 @@ const registerUser = asyncHandler( async (req, res) => {
     // get user details from frontend
     // validation - not empty
     // check if user already exists: username, email
-    // check for images, check for avatar
+    // check for images, check for avatar (optional now for PitchVault)
     // upload them to cloudinary, avatar
     // create user object - create entry in db
     // remove password and refresh token field from response
@@ -41,20 +41,29 @@ const registerUser = asyncHandler( async (req, res) => {
     // return res
 
     // receive user details from req.body
-    const {fullName, email, username, password } = req.body
+    const {
+        fullName, 
+        email, 
+        username, 
+        password,
+        userType,        // 'founder' or 'investor'
+        firmName,        // for investors
+        investmentFocus, // for investors
+        checkSize        // for investors
+    } = req.body
     //console.log("email: ", email);
 
-    // verify that all fields are present
+    // verify that all required fields are present
     if (
-        [fullName, email, username, password].some((field) => field?.trim() === "")
+        [fullName, email, username, password].some((field) => !field || field?.trim() === "")
     ) {
-        throw new ApiError(400, "All fields are required")
+        throw new ApiError(400, "Full name, email, username and password are required")
     }
 
     // .findOne helps in finding using this syntax 
     // $or: this is used to check if either is true or some shit
     const existedUser = await User.findOne({
-        $or: [{ username }, { email }]
+        $or: [{ username: username.toLowerCase() }, { email: email.toLowerCase() }]
     })
 
     if (existedUser) {
@@ -62,36 +71,44 @@ const registerUser = asyncHandler( async (req, res) => {
     }
     //console.log(req.files);
 
-    // this is by multer to tweak and collect files and some shit
-    const avatarLocalPath = req.files?.avatar[0]?.path;
-    //const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    // Avatar is now optional for PitchVault
+    const avatarLocalPath = req.files?.avatar?.[0]?.path;
 
     let coverImageLocalPath;
     if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
         coverImageLocalPath = req.files.coverImage[0].path
     }
+
+    // Upload to Cloudinary if files exist
+    let avatar = null;
+    let coverImage = null;
     
-
-    if (!avatarLocalPath) {
-        throw new ApiError(400, "Avatar file is required")
+    if (avatarLocalPath) {
+        avatar = await uploadOnCloudinary(avatarLocalPath)
+    }
+    if (coverImageLocalPath) {
+        coverImage = await uploadOnCloudinary(coverImageLocalPath)
     }
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath)
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
-
-    if (!avatar) {
-        throw new ApiError(400, "Avatar file is required")
-    }
-   
-
-    const user = await User.create({
+    // Build user object
+    const userData = {
         fullName,
-        avatar: avatar.url,
+        avatar: avatar?.url || "",
         coverImage: coverImage?.url || "",
-        email, 
+        email: email.toLowerCase(), 
         password,
-        username: username.toLowerCase()
-    })
+        username: username.toLowerCase(),
+        userType: userType || 'founder'
+    }
+
+    // Add investor-specific fields if user is an investor
+    if (userType === 'investor') {
+        if (firmName) userData.firmName = firmName
+        if (investmentFocus) userData.investmentFocus = investmentFocus
+        if (checkSize) userData.checkSize = checkSize
+    }
+
+    const user = await User.create(userData)
 
     const createdUser = await User.findById(user._id).select(
         // .select("-password") this will like empty whatever to select here while initialising with -
@@ -287,7 +304,7 @@ asyncHandler( async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
     return res
     .status(200)
-    .json(200, req.user, "Current user fetched successfully")
+    .json(new ApiResponse(200, req.user, "Current user fetched successfully"))
 })
 
 const updateAccountDetails = asyncHandler(async(req, res) => {

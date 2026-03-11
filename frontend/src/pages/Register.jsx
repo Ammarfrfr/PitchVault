@@ -1,68 +1,158 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import api from '../api'
-import './Register.css'
+import './Auth.css'
 
-export default function Register(){
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+export default function Register() {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    username: '',
+    password: '',
+  })
   const [avatar, setAvatar] = useState(null)
-  const [coverImage, setCoverImage] = useState(null)
-  const [message, setMessage] = useState(null)
+  const [avatarPreview, setAvatarPreview] = useState(null)
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  const submit = async (e) => {
-    e.preventDefault()
-    setMessage(null)
-    try{
-      const form = new FormData()
-      form.append('fullName', fullName)
-      form.append('email', String(email).trim().toLowerCase())
-      form.append('username', String(username).trim().toLowerCase())
-      form.append('password', password)
-      if(avatar) form.append('avatar', avatar)
-      if(coverImage) form.append('coverImage', coverImage)
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
 
-      await api.post('/users/register', form, { headers: {'Content-Type': 'multipart/form-data'} })
-      setMessage('Registered successfully — please login')
-      // navigate to login after short delay
-      setTimeout(() => navigate('/login'), 900)
-    } catch (err){
-      setMessage(err?.response?.data?.message || err.message)
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setAvatar(file)
+      setAvatarPreview(URL.createObjectURL(file))
+    }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+
+    try {
+      const form = new FormData()
+      form.append('fullName', formData.fullName)
+      form.append('email', formData.email.trim().toLowerCase())
+      form.append('username', formData.username.trim().toLowerCase())
+      form.append('password', formData.password)
+      if (avatar) form.append('avatar', avatar)
+
+      await api.post('/users/register', form, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+
+      navigate('/login', { state: { message: 'Account created! Please sign in.' } })
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Registration failed')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={submit} className="register-form" encType="multipart/form-data">
-      <h2>Create account</h2>
-      {message && <div className="register-message">{message}</div>}
-      <div className="register-row">
-        <label>Full Name</label>
-        <input value={fullName} onChange={e=>setFullName(e.target.value)} required className="register-full" />
+    <div className="auth-page">
+      <div className="auth-container auth-container-wide">
+        <div className="auth-header">
+          <Link to="/" className="auth-logo">
+            Pitch<span>Vault</span>
+          </Link>
+          <h1>Create your account</h1>
+          <p>Join thousands of founders sharing their vision</p>
+        </div>
+
+        {error && <div className="auth-error">{error}</div>}
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          {/* Avatar Upload */}
+          <div className="avatar-upload">
+            <label className="avatar-label">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                hidden
+              />
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="Avatar preview" className="avatar-preview" />
+              ) : (
+                <div className="avatar-placeholder">
+                  <span>+</span>
+                </div>
+              )}
+            </label>
+            <span className="avatar-hint">Upload photo</span>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Full Name</label>
+              <input
+                type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                placeholder="John Doe"
+                className="input-light"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Username</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="johndoe"
+                className="input-light"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="founder@company.com"
+              className="input-light"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              className="input-light"
+              required
+              minLength={6}
+            />
+          </div>
+
+          <button type="submit" className="btn-primary auth-submit" disabled={loading}>
+            {loading ? 'Creating account...' : 'Create Account'}
+          </button>
+        </form>
+
+        <div className="auth-footer">
+          <p>
+            Already have an account?{' '}
+            <Link to="/login">Sign in</Link>
+          </p>
+        </div>
       </div>
-      <div className="register-row">
-        <label>Email</label>
-        <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required className="register-full" />
-      </div>
-      <div className="register-row">
-        <label>Username</label>
-        <input value={username} onChange={e=>setUsername(e.target.value)} required className="register-full" />
-      </div>
-      <div className="register-row">
-        <label>Password</label>
-        <input type="password" value={password} onChange={e=>setPassword(e.target.value)} required className="register-full" />
-      </div>
-      <div className="register-row">
-        <label>Avatar</label>
-        <input type="file" accept="image/*" onChange={e=>setAvatar(e.target.files[0])} required />
-      </div>
-      <div className="register-row">
-        <label>Cover Image (optional)</label>
-        <input type="file" accept="image/*" onChange={e=>setCoverImage(e.target.files[0])} />
-      </div>
-      <button type="submit">Register</button>
-    </form>
+    </div>
   )
 }

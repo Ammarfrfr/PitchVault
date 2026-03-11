@@ -1,15 +1,360 @@
-.upload-form {
-  max-width: 640px;
+/* Upload Page - PitchVault */
+.upload-page {
+  min-height: 100vh;
+  padding: 6rem 1.5rem 4rem;
+  background: var(--cream);
+}
+
+.upload-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.upload-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.upload-tag {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--black);
+  color: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 100px;
+  margin-bottom: 1.5rem;
+}
+
+.upload-header h1 {
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  color: var(--black);
+  margin-bottom: 1rem;
+}
+
+.upload-header p {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .upload-message {
-  margin-bottom: 8px;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  font-weight: 500;
 }
 
-.upload-row {
-  margin-bottom: 8px;
+.upload-message.error {
+  background: rgba(231, 76, 60, 0.1);
+  color: #c0392b;
+  border: 1px solid rgba(231, 76, 60, 0.2);
 }
 
-.upload-full {
+.upload-message.success {
+  background: rgba(39, 174, 96, 0.1);
+  color: #1e8449;
+  border: 1px solid rgba(39, 174, 96, 0.2);
+}
+
+.upload-form {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.upload-section {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.upload-section:last-of-type {
+  margin-bottom: 2rem;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.upload-section h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  color: var(--black);
+  margin-bottom: 1.5rem;
+}
+
+/* Media Upload Dropzones */
+.upload-media-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.upload-media-box {
+  aspect-ratio: 16/9;
+}
+
+.upload-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
+  height: 100%;
+  border: 2px dashed rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  background: var(--cream);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text-secondary);
+  gap: 0.5rem;
+}
+
+.upload-dropzone:hover {
+  border-color: var(--gold);
+  background: rgba(201, 168, 76, 0.05);
+}
+
+.upload-dropzone svg {
+  opacity: 0.5;
+}
+
+.upload-dropzone span {
+  font-weight: 500;
+  color: var(--black);
+}
+
+.upload-dropzone small {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.upload-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Thumbnail Preview with aspect badge */
+.thumbnail-preview-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.thumbnail-preview-wrapper .upload-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.thumbnail-overlay {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+}
+
+.aspect-badge {
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Form Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--black);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.875rem 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--black);
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230a0a0a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px;
+  padding-right: 2.5rem;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Submit Button */
+.upload-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.125rem 2rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+.upload-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .upload-page {
+    padding: 4.5rem 1rem 3rem;
+  }
+
+  .upload-header {
+    margin-bottom: 2rem;
+  }
+
+  .upload-header h1 {
+    font-size: 2rem;
+  }
+  
+  .upload-header p {
+    font-size: 1rem;
+  }
+
+  .upload-form {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .upload-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+  }
+  
+  .upload-section h3 {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+  }
+
+  .upload-media-grid,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .upload-media-box {
+    aspect-ratio: 16/10;
+  }
+  
+  .upload-dropzone {
+    padding: 1.5rem;
+  }
+  
+  .upload-dropzone span {
+    font-size: 0.875rem;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 1rem;
+    font-size: 16px;
+  }
+  
+  .upload-submit {
+    padding: 1rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .upload-page {
+    padding: 4rem 0.75rem 2rem;
+  }
+  
+  .upload-tag {
+    font-size: 0.6875rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .upload-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .upload-form {
+    padding: 1.25rem;
+  }
+  
+  .upload-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  
+  .upload-media-box {
+    aspect-ratio: 16/9;
+  }
+  
+  .form-group label {
+    font-size: 0.8125rem;
+  }
 }

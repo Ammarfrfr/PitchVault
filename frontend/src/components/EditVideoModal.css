@@ -1,40 +1,161 @@
+/* Edit Modal - PitchVault */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  z-index: 100;
+  padding: 1rem;
 }
 
-.modal-wrap {
-  background: white;
-  padding: 16px;
+.modal-container {
+  background: var(--white);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.modal-header h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  color: var(--black);
+}
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
   border-radius: 8px;
-  width: 520px;
-  max-width: 95%;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: var(--cream);
+  color: var(--black);
+}
+
+.modal-error {
+  margin: 1rem 1.5rem 0;
+  padding: 0.75rem 1rem;
+  background: rgba(231, 76, 60, 0.1);
+  color: #c0392b;
+  border-radius: 8px;
+  font-size: 0.875rem;
 }
 
 .modal-form {
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 8px
+  gap: 1.25rem;
+}
+
+.modal-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modal-form label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--black);
 }
 
 .modal-form input,
 .modal-form textarea {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 6px
+  padding: 0.875rem 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  transition: all 0.2s ease;
 }
 
+.modal-form input:focus,
+.modal-form textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+}
+
+.modal-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Thumbnail Upload */
+.thumbnail-upload {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.thumbnail-preview {
+  width: 120px;
+  aspect-ratio: 16/9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--cream);
+}
+
+.thumbnail-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnail-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: var(--cream);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.thumbnail-btn:hover {
+  background: var(--gold);
+}
+
+/* Actions */
 .modal-actions {
   display: flex;
-  gap: 8px;
-  justify-content: flex-end
-}
-
-.modal-error {
-  color: red
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
 }

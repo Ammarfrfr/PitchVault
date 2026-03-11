@@ -1,0 +1,228 @@
+/* ============================================
+   PITCHVAULT — Image Cropper
+   ============================================ */
+
+.cropper-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-lg);
+}
+
+.cropper-modal {
+  background: var(--white);
+  max-width: 700px;
+  width: 100%;
+  border: 1px solid var(--border);
+}
+
+.cropper-header {
+  padding: var(--space-xl) var(--space-xl) var(--space-md);
+  border-bottom: 1px solid var(--border);
+}
+
+.cropper-header h3 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--black);
+}
+
+.cropper-header p {
+  font-size: 13px;
+  color: var(--gray);
+}
+
+.cropper-container {
+  position: relative;
+  height: 350px;
+  background: #0a0a0a;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crop-frame {
+  position: absolute;
+  width: 80%;
+  aspect-ratio: 16 / 9;
+  max-height: 80%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.crop-frame-border {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--gold);
+  box-shadow: 
+    0 0 0 9999px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.crop-frame::before,
+.crop-frame::after {
+  content: '';
+  position: absolute;
+  background: var(--gold);
+}
+
+/* Corner markers */
+.crop-frame::before {
+  width: 20px;
+  height: 20px;
+  top: -2px;
+  left: -2px;
+  border-top: 3px solid var(--gold);
+  border-left: 3px solid var(--gold);
+  background: transparent;
+}
+
+.crop-frame::after {
+  width: 20px;
+  height: 20px;
+  bottom: -2px;
+  right: -2px;
+  border-bottom: 3px solid var(--gold);
+  border-right: 3px solid var(--gold);
+  background: transparent;
+}
+
+.crop-ratio-label {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--gold);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 8px;
+}
+
+.cropper-image {
+  max-width: none;
+  max-height: none;
+  transform-origin: center;
+  user-select: none;
+  transition: transform 0.05s ease-out;
+}
+
+.cropper-controls {
+  padding: var(--space-md) var(--space-xl);
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.zoom-control {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.zoom-control svg {
+  color: var(--gray);
+  flex-shrink: 0;
+}
+
+.zoom-slider {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--black);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.zoom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.zoom-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--black);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.zoom-value {
+  font-size: 12px;
+  color: var(--gray);
+  min-width: 40px;
+  text-align: right;
+}
+
+.cropper-actions {
+  padding: var(--space-lg) var(--space-xl);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.btn-cancel {
+  padding: 12px 24px;
+  font-size: 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--gray);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-cancel:hover {
+  border-color: var(--black);
+  color: var(--black);
+}
+
+.btn-crop {
+  padding: 12px 24px;
+  font-size: 14px;
+  background: var(--black);
+  border: 1px solid var(--black);
+  color: var(--white);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-crop:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .cropper-modal {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .cropper-container {
+    height: 280px;
+  }
+}
