@@ -1,6 +1,10 @@
 import axios from "axios";
 
-const API_BASE = import.meta.env.VITE_API_URL;
+// Ensure we have a usable API base in dev and production.
+// If VITE_API_URL is not set (e.g., local dev), fallback to localhost:8000.
+// Also normalize to remove any trailing slash to avoid double-slash in URLs.
+const rawApiBase = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE = rawApiBase.replace(/\/$/, "");
 
 // --------------------
 // FETCH (public routes)
@@ -21,7 +25,7 @@ const api = axios.create({
   withCredentials: false, // using Bearer token, not cookies
   headers: {
     "Content-Type": "application/json",
-    'ngrok-skip-browser-warning': 'true'
+    "ngrok-skip-browser-warning": "true",
   },
 });
 

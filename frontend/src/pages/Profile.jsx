@@ -152,7 +152,7 @@ export default function Profile() {
     
     setLoading(true)
     try {
-      await api.post('/users/change-password', {
+      await api.patch('/users/change-password', {
         oldPassword,
         newPassword
       })
