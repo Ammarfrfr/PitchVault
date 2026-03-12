@@ -42,6 +42,19 @@ export function clearAuthToken() {
   delete api.defaults.headers.common["Authorization"];
 }
 
+// --------------------
+// URL HELPERS
+// --------------------
+/**
+ * Convert HTTP Cloudinary URLs to HTTPS to avoid mixed-content warnings.
+ * Use this for video/image URLs from the database that may have been
+ * stored with http:// before we enabled secure uploads.
+ */
+export function toSecureUrl(url) {
+  if (!url || typeof url !== "string") return url;
+  return url.replace(/^http:\/\/res\.cloudinary\.com/, "https://res.cloudinary.com");
+}
+
 export default api;
 
 // --------------------

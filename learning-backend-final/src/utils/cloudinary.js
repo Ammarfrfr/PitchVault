@@ -5,7 +5,8 @@ import path from "path";
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
   api_key: process.env.CLOUDINARY_API_KEY, 
-  api_secret: process.env.CLOUDINARY_API_SECRET 
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true  // Always use HTTPS URLs
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
@@ -14,6 +15,7 @@ const uploadOnCloudinary = async (localFilePath) => {
 
     const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
+      secure: true,  // Ensure returned URL is HTTPS
     });
 
     // ✅ SAFE DELETE

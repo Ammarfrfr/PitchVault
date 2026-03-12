@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import api from '../api'
+import api, { toSecureUrl } from '../api'
 import { useAuth } from '../contexts/AuthContext'
 import './Home.css'
 
@@ -129,7 +129,7 @@ export default function Home() {
             >
               <div 
                 className="pitch-thumb" 
-                style={{ background: pitch.thumbnailColor || (pitch.thumbnail ? `url(${pitch.thumbnail})` : 'linear-gradient(135deg, #1a1a2e, #16213e)'), backgroundSize: 'cover', backgroundPosition: 'center' }}
+                style={{ background: pitch.thumbnailColor || (pitch.thumbnail ? `url(${toSecureUrl(pitch.thumbnail)})` : 'linear-gradient(135deg, #1a1a2e, #16213e)'), backgroundSize: 'cover', backgroundPosition: 'center' }}
               >
                 <div className="play-btn">▶</div>
               </div>

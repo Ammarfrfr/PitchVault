@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import api from '../api'
+import api, { toSecureUrl } from '../api'
 import { useAuth } from '../contexts/AuthContext'
 import './Video.css'
 
@@ -114,13 +114,13 @@ export default function Video() {
           {video.videoFile ? (
             <video 
               controls 
-              src={video.videoFile} 
+              src={toSecureUrl(video.videoFile)} 
               className="pitch-player"
-              poster={video.thumbnail}
+              poster={toSecureUrl(video.thumbnail)}
             />
           ) : (
             <div className="pitch-player-fallback">
-              <img src={video.thumbnail} alt={video.title} />
+              <img src={toSecureUrl(video.thumbnail)} alt={video.title} />
               <p>Video playback unavailable</p>
             </div>
           )}

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useState } from 'react'
-import api from '../api'
+import api, { toSecureUrl } from '../api'
 import './VideoCard.css'
 
 // Generate avatar with initials
@@ -116,7 +116,7 @@ export default function VideoCard({
         {/* Thumbnail */}
         <div className="pitch-thumbnail">
           <img 
-            src={video.thumbnail} 
+            src={toSecureUrl(video.thumbnail)} 
             alt={video.title}
             loading="lazy"
           />
