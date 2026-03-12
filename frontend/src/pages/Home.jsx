@@ -125,7 +125,7 @@ export default function Home() {
             ))
           ) : (
             <div className="pitches-empty">
-              <p>Log in to see the pitches</p>
+              <p>Sign In to see the pitches</p>
               <Link to={user ? "/upload" : "/login"} className="btn-secondary" onClick={(e) => requireAuth(e, '/upload')}>
                 Sign In
               </Link>
