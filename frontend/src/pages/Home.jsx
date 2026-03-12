@@ -4,43 +4,7 @@ import api, { toSecureUrl } from '../api'
 import { useAuth } from '../contexts/AuthContext'
 import './Home.css'
 
-// Sample pitch data for demo (until backend has real pitches)
-const demoPitches = [
-  {
-    _id: '1',
-    companyName: 'NeuralStack AI',
-    tagline: 'Automating backend infrastructure with LLMs',
-    sector: 'Deep Tech',
-    views: 1200,
-    thumbnailColor: 'linear-gradient(135deg, #1a1a2e, #16213e)',
-  },
-  {
-    _id: '2',
-    companyName: 'GreenRoot',
-    tagline: 'Carbon credits marketplace for emerging markets',
-    sector: 'Climate',
-    views: 890,
-    thumbnailColor: 'linear-gradient(135deg, #0d1b0d, #1a3a1a)',
-  },
-  {
-    _id: '3',
-    companyName: 'Payloop',
-    tagline: 'Cross-border payments for Southeast Asia',
-    sector: 'Fintech',
-    views: 2100,
-    thumbnailColor: 'linear-gradient(135deg, #2a1a0d, #3d2a12)',
-  },
-  {
-    _id: '4',
-    companyName: 'MediScan',
-    tagline: 'AI diagnostics for tier-2 hospitals',
-    sector: 'HealthTech',
-    views: 3400,
-    thumbnailColor: 'linear-gradient(135deg, #1a0d2a, #2d1a3d)',
-  },
-]
-
-// Sample investors
+// Sample investors (for display, these can stay)
 const investors = [
   { initials: 'RS', name: 'Rohit Sharma', firm: 'Sequoia India', focus: 'SaaS · AI · Fintech', color: '#1a1a2e' },
   { initials: 'PK', name: 'Priya Kapoor', firm: 'Lightspeed Venture', focus: 'Climate · HealthTech', color: '#0d1b0d' },
@@ -49,7 +13,8 @@ const investors = [
 ]
 
 export default function Home() {
-  const [pitches, setPitches] = useState(demoPitches)
+  const [pitches, setPitches] = useState([])
+  const [loading, setLoading] = useState(true)
   const { user } = useAuth()
   const navigate = useNavigate()
 
@@ -61,18 +26,19 @@ export default function Home() {
     }
   }
 
-  // Fetch real pitches when API is ready
+  // Fetch real pitches from API
   useEffect(() => {
     const fetchPitches = async () => {
+      setLoading(true)
       try {
         const res = await api.get('/videos', { params: { page: 1, limit: 4 } })
         const list = res?.data?.data?.videos || res?.data?.videos || []
-        if (list.length > 0) {
-          setPitches(list)
-        }
+        setPitches(list)
       } catch (err) {
-        // Keep demo data if API fails
-        console.log('Using demo pitches')
+        console.log('Failed to fetch pitches:', err.message)
+        setPitches([])
+      } finally {
+        setLoading(false)
       }
     }
     fetchPitches()
@@ -119,32 +85,52 @@ export default function Home() {
 
         <div className="hero-right">
           <div className="feed-label">Live Pitches</div>
-          {pitches.map((pitch, i) => (
-            <Link 
-              to={user ? (pitch.videoFile ? `/pitch/${pitch._id}` : '/browse') : '/login'} 
-              key={pitch._id} 
-              className="pitch-card"
-              style={{ animationDelay: `${i * 0.1}s` }}
-              onClick={(e) => requireAuth(e, pitch.videoFile ? `/pitch/${pitch._id}` : '/browse')}
-            >
+          {loading ? (
+            <div className="pitches-loading">
+              <div className="spinner"></div>
+              <p>Loading pitches...</p>
+            </div>
+          ) : pitches.length > 0 ? (
+            pitches.map((pitch, i) => (
               <div 
-                className="pitch-thumb" 
-                style={{ background: pitch.thumbnailColor || (pitch.thumbnail ? `url(${toSecureUrl(pitch.thumbnail)})` : 'linear-gradient(135deg, #1a1a2e, #16213e)'), backgroundSize: 'cover', backgroundPosition: 'center' }}
+                key={pitch._id} 
+                className="pitch-card"
+                style={{ animationDelay: `${i * 0.1}s`, cursor: 'pointer' }}
+                onClick={(e) => {
+                  if (!user) {
+                    navigate('/login', { state: { from: `/pitch/${pitch._id}`, message: 'Please sign in to view this pitch' } })
+                  } else {
+                    navigate(`/pitch/${pitch._id}`)
+                  }
+                }}
               >
-                <div className="play-btn">▶</div>
-              </div>
-              <div className="pitch-info">
-                <div>
-                  <div className="pitch-company">{pitch.companyName || pitch.title}</div>
-                  <div className="pitch-tagline">{pitch.tagline || pitch.description?.slice(0, 60)}</div>
+                <div 
+                  className="pitch-thumb" 
+                  style={{ background: pitch.thumbnail ? `url(${toSecureUrl(pitch.thumbnail)})` : 'linear-gradient(135deg, #1a1a2e, #16213e)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+                >
+                  <div className="play-btn">▶</div>
+                  {!user && <div className="login-overlay">Sign in to watch</div>}
                 </div>
-                <div className="pitch-meta">
-                  <span className="sector-badge">{pitch.sector || 'Startup'}</span>
-                  <span className="pitch-views">{(pitch.views || 0).toLocaleString()} views</span>
+                <div className="pitch-info">
+                  <div>
+                    <div className="pitch-company">{pitch.companyName || pitch.title}</div>
+                    <div className="pitch-tagline">{pitch.tagline || pitch.description?.slice(0, 60)}</div>
+                  </div>
+                  <div className="pitch-meta">
+                    <span className="sector-badge">{pitch.sector || 'Startup'}</span>
+                    <span className="pitch-views">{(pitch.views || 0).toLocaleString()} views</span>
+                  </div>
                 </div>
               </div>
-            </Link>
-          ))}
+            ))
+          ) : (
+            <div className="pitches-empty">
+              <p>No pitches yet. Be the first to share your vision!</p>
+              <Link to={user ? "/upload" : "/login"} className="btn-secondary" onClick={(e) => requireAuth(e, '/upload')}>
+                Upload a Pitch
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 

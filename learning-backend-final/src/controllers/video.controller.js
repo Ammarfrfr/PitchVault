@@ -78,21 +78,43 @@ const publishAVideo = asyncHandler(async (req, res) => {
     const { 
       title, 
       description,
-      // PitchVault fields
-      companyName,
-      founderEmail,
-      sector,
-      stage,
-      raisingAmount,
-      tagline,
-      location,
-      website,
-      linkedIn
+      pitchMeta,  // JSON string from frontend
+      // Also accept individual fields for backward compatibility
+      companyName: directCompanyName,
+      founderEmail: directFounderEmail,
+      sector: directSector,
+      stage: directStage,
+      raisingAmount: directRaisingAmount,
+      tagline: directTagline,
+      location: directLocation,
+      website: directWebsite,
+      linkedIn: directLinkedIn
     } = req.body
 
     if(!title || !description){
       throw new ApiError(400, "Title and description are mandatory")
     }
+
+    // Parse pitchMeta if provided (frontend sends as JSON string)
+    let parsedMeta = {}
+    if (pitchMeta) {
+      try {
+        parsedMeta = typeof pitchMeta === 'string' ? JSON.parse(pitchMeta) : pitchMeta
+      } catch (e) {
+        console.log("Failed to parse pitchMeta:", e.message)
+      }
+    }
+
+    // Use parsed values or direct values (with fallbacks)
+    const companyName = parsedMeta.companyName || directCompanyName
+    const founderEmail = parsedMeta.founderEmail || directFounderEmail
+    const sector = parsedMeta.sector || directSector
+    const stage = parsedMeta.stage || directStage
+    const raisingAmount = parsedMeta.raisingAmount || directRaisingAmount
+    const tagline = parsedMeta.tagline || directTagline
+    const location = parsedMeta.location || directLocation
+    const website = parsedMeta.website || directWebsite
+    const linkedIn = parsedMeta.linkedIn || directLinkedIn
     
     const videoLocalPath = req.files?.videoFile?.[0]?.path;
     const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path;

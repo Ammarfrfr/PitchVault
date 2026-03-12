@@ -34,17 +34,32 @@ const formatDate = (dateString) => {
   return `${Math.floor(days / 365)} years ago`
 }
 
-// Parse pitch meta from description if available
-const parsePitchMeta = (video) => {
+// Parse pitch meta - try both direct fields and pitchMeta for backward compatibility
+const getPitchFields = (video) => {
+  // First try direct fields from video model (new approach)
+  if (video.companyName || video.sector || video.stage) {
+    return {
+      companyName: video.companyName,
+      founderEmail: video.founderEmail,
+      sector: video.sector,
+      stage: video.stage,
+      raisingAmount: video.raisingAmount,
+      tagline: video.tagline,
+      location: video.location,
+      website: video.website,
+      linkedIn: video.linkedIn
+    }
+  }
+  
+  // Fall back to pitchMeta (old approach / for legacy data)
   try {
-    // Check if pitchMeta is stored in description as JSON
     if (video.pitchMeta) {
       return typeof video.pitchMeta === 'string' ? JSON.parse(video.pitchMeta) : video.pitchMeta
     }
   } catch (e) {
-    return null
+    return {}
   }
-  return null
+  return {}
 }
 
 export default function VideoCard({ 
@@ -68,10 +83,10 @@ export default function VideoCard({
   const ownerName = video.owner?.fullName || video.owner?.username || 'Unknown'
   const ownerAvatar = video.owner?.avatar || getInitialsAvatar(ownerName)
   
-  const pitchMeta = parsePitchMeta(video)
-  const companyName = pitchMeta?.companyName || ownerName
-  const sector = pitchMeta?.sector
-  const stage = pitchMeta?.stage
+  const pitchMeta = getPitchFields(video)
+  const companyName = pitchMeta?.companyName || video.companyName || ownerName
+  const sector = pitchMeta?.sector || video.sector
+  const stage = pitchMeta?.stage || video.stage
 
   const handleDelete = async (e) => {
     e.preventDefault()
