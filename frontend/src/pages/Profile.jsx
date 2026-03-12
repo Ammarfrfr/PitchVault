@@ -140,14 +140,24 @@ export default function Profile() {
     e.preventDefault()
     const { oldPassword, newPassword, confirmPassword } = passwordForm
     
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      return showMessage('Please fill in all password fields', 'error')
+    // ========== SPECIFIC VALIDATION ==========
+    if (!oldPassword) {
+      return showMessage('Please enter your current password', 'error')
+    }
+    if (!newPassword) {
+      return showMessage('Please enter a new password', 'error')
+    }
+    if (!confirmPassword) {
+      return showMessage('Please confirm your new password', 'error')
+    }
+    if (newPassword.length < 8) {
+      return showMessage('New password must be at least 8 characters', 'error')
     }
     if (newPassword !== confirmPassword) {
       return showMessage('New passwords do not match', 'error')
     }
-    if (newPassword.length < 6) {
-      return showMessage('Password must be at least 6 characters', 'error')
+    if (oldPassword === newPassword) {
+      return showMessage('New password must be different from your current password', 'error')
     }
     
     setLoading(true)
@@ -159,7 +169,8 @@ export default function Profile() {
       setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' })
       showMessage('Password changed successfully!', 'success')
     } catch (err) {
-      showMessage(err?.response?.data?.message || err.message, 'error')
+      // Backend will return specific error messages
+      showMessage(err?.response?.data?.message || 'Failed to change password. Please try again.', 'error')
     } finally {
       setLoading(false)
     }

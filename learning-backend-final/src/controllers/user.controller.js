@@ -53,11 +53,36 @@ const registerUser = asyncHandler( async (req, res) => {
     } = req.body
     //console.log("email: ", email);
 
-    // verify that all required fields are present
-    if (
-        [fullName, email, username, password].some((field) => !field || field?.trim() === "")
-    ) {
-        throw new ApiError(400, "Full name, email, username and password are required")
+    // ========== SPECIFIC FIELD VALIDATION ==========
+    if (!fullName || fullName.trim() === "") {
+        throw new ApiError(400, "Full name is required")
+    }
+    if (!email || email.trim() === "") {
+        throw new ApiError(400, "Email is required")
+    }
+    if (!username || username.trim() === "") {
+        throw new ApiError(400, "Username is required")
+    }
+    if (!password) {
+        throw new ApiError(400, "Password is required")
+    }
+    if (password.length < 8) {
+        throw new ApiError(400, "Password must be at least 8 characters long")
+    }
+    
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+        throw new ApiError(400, "Please enter a valid email address")
+    }
+    
+    // Username validation (alphanumeric, no spaces)
+    const usernameRegex = /^[a-zA-Z0-9_]+$/
+    if (!usernameRegex.test(username.trim())) {
+        throw new ApiError(400, "Username can only contain letters, numbers, and underscores")
+    }
+    if (username.trim().length < 3) {
+        throw new ApiError(400, "Username must be at least 3 characters long")
     }
 
     // .findOne helps in finding using this syntax 
@@ -67,7 +92,13 @@ const registerUser = asyncHandler( async (req, res) => {
     })
 
     if (existedUser) {
-        throw new ApiError(409, "User with email or username already exists")
+        // Provide specific error for which field is taken
+        if (existedUser.email.toLowerCase() === email.trim().toLowerCase()) {
+            throw new ApiError(409, "An account with this email already exists")
+        }
+        if (existedUser.username.toLowerCase() === username.trim().toLowerCase()) {
+            throw new ApiError(409, "This username is already taken")
+        }
     }
     //console.log(req.files);
 
@@ -137,23 +168,30 @@ const loginUser = asyncHandler( async (req, res) => {
     const {email, username, password} = req.body
     console.log(email); 
 
-    // require username OR email, and password
+    // ========== SPECIFIC VALIDATION ==========
+    // require username OR email
     if (!username && !email) {
-        throw new ApiError(400, "Username or Email is required to LogIn")
+        throw new ApiError(400, "Please enter your email or username")
+    }
+    
+    // require password
+    if (!password) {
+        throw new ApiError(400, "Please enter your password")
     }
 
     const user = await User.findOne({
-        $or: [{username},{email}]
+        $or: [{username: username?.toLowerCase()}, {email: email?.toLowerCase()}]
     })
 
     if(!user){
-        throw new ApiError(404, "Invalid Credentials")
+        // User not found - but don't reveal if email/username exists for security
+        throw new ApiError(401, "No account found with these credentials. Please check your email/username or create an account.")
     }
 
     const isPasswordValid = await user.isPasswordCorrect(password)
 
     if(!isPasswordValid){
-        throw new ApiError(400, "Password is Invalid")
+        throw new ApiError(401, "Incorrect password. Please try again.")
     }
 
     const {accessToken, refreshToken} = await generateRefreshAndAccessToken(user._id)
@@ -278,19 +316,31 @@ const changeCurrentPassword =
 asyncHandler( async (req, res) => {
     const {oldPassword, newPassword } = req.body
     
+    // ========== SPECIFIC VALIDATION ==========
+    if (!oldPassword) {
+        throw new ApiError(400, "Please enter your current password")
+    }
+    if (!newPassword) {
+        throw new ApiError(400, "Please enter a new password")
+    }
+    if (newPassword.length < 8) {
+        throw new ApiError(400, "New password must be at least 8 characters long")
+    }
+    if (oldPassword === newPassword) {
+        throw new ApiError(400, "New password must be different from your current password")
+    }
     
     const user = await User.findById(req.user?._id)
+    
+    if (!user) {
+        throw new ApiError(401, "User not found. Please log in again.")
+    }
+    
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
 
     if(!isPasswordCorrect){
-        throw new ApiError(401, "The old password is incorrect")
+        throw new ApiError(401, "Current password is incorrect. Please try again.")
     }
-    
-    /*
-    if(newPassword === confirmPassword){
-        throw new ApiError(401, "The new password and the confirm Password is not same")
-    }
-    */
 
     user.password = newPassword;
     await user.save({validateBeforeSave: false})

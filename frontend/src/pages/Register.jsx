@@ -31,14 +31,53 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
+
+    // ========== CLIENT-SIDE VALIDATION ==========
+    const { fullName, email, username, password } = formData
+    
+    if (!fullName.trim()) {
+      setError('Please enter your full name')
+      return
+    }
+    if (!username.trim()) {
+      setError('Please choose a username')
+      return
+    }
+    if (username.trim().length < 3) {
+      setError('Username must be at least 3 characters long')
+      return
+    }
+    const usernameRegex = /^[a-zA-Z0-9_]+$/
+    if (!usernameRegex.test(username.trim())) {
+      setError('Username can only contain letters, numbers, and underscores')
+      return
+    }
+    if (!email.trim()) {
+      setError('Please enter your email address')
+      return
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      setError('Please enter a valid email address')
+      return
+    }
+    if (!password) {
+      setError('Please create a password')
+      return
+    }
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long')
+      return
+    }
+
     setLoading(true)
 
     try {
       const form = new FormData()
-      form.append('fullName', formData.fullName)
-      form.append('email', formData.email.trim().toLowerCase())
-      form.append('username', formData.username.trim().toLowerCase())
-      form.append('password', formData.password)
+      form.append('fullName', fullName.trim())
+      form.append('email', email.trim().toLowerCase())
+      form.append('username', username.trim().toLowerCase())
+      form.append('password', password)
       if (avatar) form.append('avatar', avatar)
 
       await api.post('/users/register', form, {
@@ -47,7 +86,8 @@ export default function Register() {
 
       navigate('/login', { state: { message: 'Account created! Please sign in.' } })
     } catch (err) {
-      setError(err?.response?.data?.message || 'Registration failed')
+      const backendMsg = err?.response?.data?.message
+      setError(backendMsg || 'Registration failed. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -137,8 +177,9 @@ export default function Register() {
               placeholder="••••••••"
               className="input-light"
               required
-              minLength={6}
+              minLength={8}
             />
+            <span className="form-hint">Must be at least 8 characters</span>
           </div>
 
           <button type="submit" className="btn-primary auth-submit" disabled={loading}>

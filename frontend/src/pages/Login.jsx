@@ -20,21 +20,35 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
+    
+    // ========== CLIENT-SIDE VALIDATION ==========
+    const trimmedEmail = email.trim()
+    if (!trimmedEmail) {
+      setError('Please enter your email or username')
+      return
+    }
+    if (!password) {
+      setError('Please enter your password')
+      return
+    }
+
     setLoading(true)
 
     try {
       const payload = { password }
-      const trimmed = email.trim().toLowerCase()
-      if (trimmed.includes('@')) {
-        payload.email = trimmed
+      const normalized = trimmedEmail.toLowerCase()
+      if (normalized.includes('@')) {
+        payload.email = normalized
       } else {
-        payload.username = trimmed
+        payload.username = normalized
       }
 
       await login(payload)
       navigate(from, { replace: true })
     } catch (err) {
-      setError(err?.response?.data?.message || 'Invalid credentials')
+      // Use backend error message if available, otherwise show generic
+      const backendMsg = err?.response?.data?.message
+      setError(backendMsg || 'Login failed. Please check your credentials and try again.')
     } finally {
       setLoading(false)
     }
